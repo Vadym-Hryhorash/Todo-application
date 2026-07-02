@@ -1,8 +1,9 @@
 using DataAccess;
-using Microsoft.EntityFrameworkCore;
-using System;
 using DataAccess.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Services;
+using Services.Interfaces;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddControllers();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

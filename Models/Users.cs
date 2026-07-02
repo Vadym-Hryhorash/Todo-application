@@ -7,5 +7,5 @@ public class Users
     public string Username { get; set; }
     public string Email { get; set; }
     public string PasswordHash { get; set; }
-    public ICollection<Tasks> Tasks { get; set; }
+    public ICollection<Tasks>? Tasks { get; set; }
 }
