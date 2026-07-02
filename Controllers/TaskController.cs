@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Models;
-using Services.Interfaces;
+using TodoApp.Models;
+using TodoApp.Services.Interfaces;
 
-namespace Controllers
+namespace TodoApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

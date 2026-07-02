@@ -1,6 +1,6 @@
-﻿using Models;
+﻿using TodoApp.Models;
 
-namespace Services.Interfaces
+namespace TodoApp.Services.Interfaces
 {
     public interface ITaskService
     {

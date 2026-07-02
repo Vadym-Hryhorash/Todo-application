@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Models;
+using TodoApp.Models;
 
-namespace DataAccess;
+namespace TodoApp.DataAccess;
 
 public class DbContextTodoApp : DbContext
 {

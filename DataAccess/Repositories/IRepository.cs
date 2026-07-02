@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace DataAccess.Repositories
+namespace TodoApp.DataAccess.Repositories
 {
     public interface IRepository<T>
     {

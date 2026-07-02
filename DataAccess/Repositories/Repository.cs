@@ -1,8 +1,8 @@
-﻿using DataAccess;
+﻿using TodoApp.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace DataAccess.Repositories
+namespace TodoApp.DataAccess.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {

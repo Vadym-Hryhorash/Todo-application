@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-namespace Models;
+namespace TodoApp.Models;
 public class Users
 {
     public int Id { get; set; }

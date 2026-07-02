@@ -1,9 +1,9 @@
-using DataAccess;
-using DataAccess.Repositories;
+using TodoApp.DataAccess;
 using Microsoft.EntityFrameworkCore;
-using Services;
-using Services.Interfaces;
+using TodoApp.Services;
 using System;
+using TodoApp.Services.Interfaces;
+using TodoApp.DataAccess.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,10 +16,12 @@ builder.Services.AddDbContext<DbContextTodoApp>(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddControllers();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -27,6 +29,8 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<TodoApp.Middlewares.ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

@@ -1,5 +1,5 @@
 using System;
-namespace Models;
+namespace TodoApp.Models;
 public class Tasks
 {
     public int Id { get; set; }

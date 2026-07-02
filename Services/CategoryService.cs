@@ -1,8 +1,8 @@
-﻿using DataAccess.Repositories;
-using Models;
-using Services.Interfaces;
+﻿using TodoApp.DataAccess.Repositories;
+using TodoApp.Models;
+using TodoApp.Services.Interfaces;
 
-namespace Services
+namespace TodoApp.Services
 {
     public class CategoryService : ICategoryService
     {

@@ -1,8 +1,8 @@
-﻿using DataAccess.Repositories;
-using Models;
-using Services.Interfaces;
+﻿using TodoApp.DataAccess.Repositories;
+using TodoApp.Models;
+using TodoApp.Services.Interfaces;
 
-namespace Services
+namespace TodoApp.Services
 {
     public class UserService : IUserService
     {
@@ -30,7 +30,12 @@ namespace Services
 
         public Users CreateUser(Users user)
         {
-            //TODO: Add validation logic here, password hashing.
+            var existingUser = GetUserByEmail(user.Email);
+            if (existingUser != null)
+            {
+                throw new ArgumentException($"User with {user.Email} already exists.");
+            }
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
             _userRepository.Add(user);
             _userRepository.SaveChanges();
             return user;

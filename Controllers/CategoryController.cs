@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Models;
-using Services.Interfaces;
+using TodoApp.Models;
+using TodoApp.Services.Interfaces;
 
 namespace Todo_application.Controllers
 {

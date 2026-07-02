@@ -1,8 +1,8 @@
-﻿using Models;
-using DataAccess.Repositories;
-using Services.Interfaces;
+﻿using TodoApp.Models;
+using TodoApp.DataAccess.Repositories;
+using TodoApp.Services.Interfaces;
 
-namespace Services
+namespace TodoApp.Services
 {
     public class TaskService : ITaskService
     {
