@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TodoApp.DataAccess;
 
@@ -11,9 +12,11 @@ using TodoApp.DataAccess;
 namespace TodoApp.Migrations
 {
     [DbContext(typeof(DbContextTodoApp))]
-    partial class DbContextTodoAppModelSnapshot : ModelSnapshot
+    [Migration("20260703151317_AddUserIdToCategories")]
+    partial class AddUserIdToCategories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

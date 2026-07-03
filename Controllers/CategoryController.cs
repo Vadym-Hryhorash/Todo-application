@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TodoApp.Models;
 using TodoApp.Services.Interfaces;
 
-namespace Todo_application.Controllers
+namespace TodoApp.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -14,16 +17,26 @@ namespace Todo_application.Controllers
             _categoryService = categoryService;
         }
 
+        private int GetCurrentUserId()
+        {
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                throw new UnauthorizedAccessException("User not found!");
+            }
+            return int.Parse(userIdString);
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<Categories>> GetCategories()
         {
-            return Ok(_categoryService.GetAllCategories());
+            return Ok(_categoryService.GetAllCategories(GetCurrentUserId()));
         }
 
         [HttpGet("{id}")]
         public ActionResult<Categories> GetCategoryById(int id)
         {
-            var category = _categoryService.GetCategoryById(id);
+            var category = _categoryService.GetCategoryById(id, GetCurrentUserId());
             if (category == null)
             {
                 return NotFound();
@@ -35,6 +48,7 @@ namespace Todo_application.Controllers
         [HttpPost]
         public ActionResult<Categories> CreateCategory([FromBody] Categories category)
         {
+            category.UserId = GetCurrentUserId();
             var createdCategory = _categoryService.CreateCategory(category);
             return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategory.Id }, createdCategory);
         }
@@ -47,28 +61,21 @@ namespace Todo_application.Controllers
                 return BadRequest();
             }
 
-            var existingCategory = _categoryService.GetCategoryById(id);
-
-            if (existingCategory == null)
+            try
+            {
+                _categoryService.UpdateCategory(category, GetCurrentUserId());
+                return NoContent();
+            }
+            catch (Exception)
             {
                 return NotFound();
             }
-
-            existingCategory.Name = category.Name;
-            _categoryService.UpdateCategory(existingCategory);
-            return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteCategory(int id)
         {
-            var category = _categoryService.GetCategoryById(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            _categoryService.DeleteCategory(id);
+            _categoryService.DeleteCategory(id, GetCurrentUserId());
             return NoContent();
         }
     }

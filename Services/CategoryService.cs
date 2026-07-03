@@ -13,14 +13,14 @@ namespace TodoApp.Services
             _categoryRepository = categoryRepository;
         }
 
-        public IEnumerable<Categories> GetAllCategories()
+        public IEnumerable<Categories> GetAllCategories(int userId)
         {
-            return _categoryRepository.GetAll().ToList();
+            return _categoryRepository.FindByCondition(c => c.UserId == userId).ToList();
         }
 
-        public Categories? GetCategoryById(int id)
+        public Categories? GetCategoryById(int id, int userId)
         {
-            return _categoryRepository.FindByCondition(c => c.Id == id).FirstOrDefault();
+            return _categoryRepository.FindByCondition(c => c.Id == id && c.UserId == userId).FirstOrDefault();
         }
 
         public Categories CreateCategory(Categories category)
@@ -30,15 +30,21 @@ namespace TodoApp.Services
             return category;
         }
 
-        public void UpdateCategory(Categories category)
+        public void UpdateCategory(Categories category, int userId)
         {
-            _categoryRepository.Update(category);
+            var existingCategory = GetCategoryById(category.Id, userId);
+            if (existingCategory == null)
+            {
+                throw new Exception("Category not found.");
+            }
+            existingCategory.Name = category.Name;
+            _categoryRepository.Update(existingCategory);
             _categoryRepository.SaveChanges();
         }
 
-        public void DeleteCategory(int id)
+        public void DeleteCategory(int id, int userId)
         {
-            var category = GetCategoryById(id);
+            var category = GetCategoryById(id, userId);
             if (category != null)
             {
                 _categoryRepository.Delete(category);

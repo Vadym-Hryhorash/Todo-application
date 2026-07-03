@@ -11,9 +11,9 @@ namespace TodoApp.Services
         {
             _taskRepository = repository;
         }
-        public IEnumerable<Tasks> GetTasks(int pageNumber, int pageSize, int? categoryId, string? searchQuery)
+        public IEnumerable<Tasks> GetTasks(int pageNumber, int pageSize, int? categoryId, string? searchQuery, int userId)
         {
-            IQueryable<Tasks> query = _taskRepository.GetAll();
+            IQueryable<Tasks> query = _taskRepository.GetAll().Where(t => t.UserId == userId);
 
             if (categoryId.HasValue)
             {
@@ -28,9 +28,9 @@ namespace TodoApp.Services
             query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
             return query.ToList();
         }
-        public Tasks? GetTaskById(int id)
+        public Tasks? GetTaskById(int id, int userId)
         {
-            return _taskRepository.GetById(id);
+            return _taskRepository.GetAll().FirstOrDefault(t => t.Id == id && t.UserId == userId);
         }
 
         public Tasks CreateTask(Tasks task)
@@ -43,9 +43,9 @@ namespace TodoApp.Services
             return task;
         }
 
-        public void UpdateTask(Tasks task)
+        public void UpdateTask(Tasks task, int userId)
         {
-            Tasks? existingTask = _taskRepository.GetById(task.Id);
+            Tasks? existingTask = GetTaskById(task.Id, userId);
             if (existingTask == null)
             {
                 throw new Exception("Task not found!");
@@ -61,9 +61,9 @@ namespace TodoApp.Services
             _taskRepository.SaveChanges();
         }
 
-        public void DeleteTask(int id)
+        public void DeleteTask(int id, int userId)
         {
-            Tasks? task = _taskRepository.GetById(id);
+            Tasks? task = GetTaskById(id, userId);
             if (task != null)
             {
                 _taskRepository.Delete(task);

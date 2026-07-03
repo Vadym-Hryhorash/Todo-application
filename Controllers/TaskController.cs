@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TodoApp.Models;
 using TodoApp.Services.Interfaces;
 
 namespace TodoApp.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TasksController : ControllerBase
@@ -21,14 +24,17 @@ namespace TodoApp.Controllers
         [FromQuery] int? categoryId = null,
         [FromQuery] string? searchQuery = null)
         {
-            var tasks = _taskService.GetTasks(pageNumber, pageSize, categoryId, searchQuery);
+            int userId = GetCurrentUserId();
+            var tasks = _taskService.GetTasks(pageNumber, pageSize, categoryId, searchQuery, userId);
             return Ok(tasks);
         }
 
         [HttpGet("{id}")]
         public ActionResult<Tasks> GetTaskById(int id)
         {
-            var task = _taskService.GetTaskById(id);
+            int userId = GetCurrentUserId();
+
+            var task = _taskService.GetTaskById(id, userId);
 
             if (task == null)
             {
@@ -41,6 +47,7 @@ namespace TodoApp.Controllers
         [HttpPost]
         public ActionResult<Tasks> CreateTask([FromBody] Tasks task)
         {
+            task.UserId = GetCurrentUserId();
             var createdTask = _taskService.CreateTask(task);
             return CreatedAtAction(nameof(GetTaskById), new { id = createdTask.Id }, createdTask);
         }
@@ -53,9 +60,11 @@ namespace TodoApp.Controllers
                 return BadRequest();
             }
 
+            task.UserId = GetCurrentUserId();
+
             try
             {
-                _taskService.UpdateTask(task);
+                _taskService.UpdateTask(task, GetCurrentUserId());
                 return NoContent();
             }
             catch (Exception)
@@ -67,8 +76,19 @@ namespace TodoApp.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteTask(int id)
         {
-            _taskService.DeleteTask(id);
+            _taskService.DeleteTask(id, GetCurrentUserId());
             return NoContent();
+        }
+
+        private int GetCurrentUserId()
+        {
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                throw new UnauthorizedAccessException("User not found!");
+            }
+
+            return int.Parse(userIdString);
         }
     }
 }

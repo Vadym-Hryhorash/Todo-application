@@ -4,10 +4,10 @@ namespace TodoApp.Services.Interfaces
 {
     public interface ICategoryService
     {
-        IEnumerable<Categories> GetAllCategories();
-        Categories? GetCategoryById(int id);
+        IEnumerable<Categories> GetAllCategories(int userId);
+        Categories? GetCategoryById(int id, int userId);
         Categories CreateCategory(Categories category);
-        void UpdateCategory(Categories category);
-        void DeleteCategory(int id);
+        void UpdateCategory(Categories category, int userId);
+        void DeleteCategory(int id, int userId);
     }
 }
