@@ -30,12 +30,6 @@ public class DbContextTodoApp : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
-            entity.HasData(
-                new Categories { Id = 1, Name = "Work" },
-                new Categories { Id = 2, Name = "Personal" },
-                new Categories { Id = 3, Name = "Shopping" },
-                new Categories { Id = 4, Name = "Studying" }
-            );
         });
 
         modelBuilder.Entity<Tasks>(entity =>
@@ -50,7 +44,7 @@ public class DbContextTodoApp : DbContext
             entity.HasOne(t => t.Category)
                   .WithMany(c => c.Tasks)
                   .HasForeignKey(t => t.CategoryId)
-                  .OnDelete(DeleteBehavior.Restrict); 
+                  .OnDelete(DeleteBehavior.SetNull); 
 
             entity.HasOne(t => t.User)
                   .WithMany(u => u.Tasks)

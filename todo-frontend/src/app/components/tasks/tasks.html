@@ -1,0 +1,139 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+  <div class="container-fluid">
+    <span class="navbar-brand fw-bold mb-0 h1">TodoApp</span>
+    
+    <div class="d-flex w-50">
+      <input 
+        class="form-control me-2" 
+        type="search" 
+        placeholder="Search tasks..." 
+        [(ngModel)]="searchQuery" 
+        (keyup.enter)="onSearch()"
+      >
+      <button class="btn btn-light" (click)="onSearch()">Search</button>
+    </div>
+
+    <button class="btn btn-outline-light" (click)="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="container-fluid px-4">
+  <div class="row">
+    
+    <div class="col-md-3 mb-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <h5 class="card-title fw-bold mb-3">Categories</h5>
+          
+          <ul class="list-group list-group-flush mb-3">
+            <li class="list-group-item list-group-item-action cursor-pointer" 
+                [class.active]="selectedCategoryId === null"
+                (click)="filterByCategory(null)">
+              All Tasks
+            </li>
+            
+            @for (cat of categories; track cat.id || $index) {
+              <li class="list-group-item list-group-item-action cursor-pointer d-flex justify-content-between align-items-center"
+                  [class.active]="selectedCategoryId === cat.id"
+                  (click)="filterByCategory(cat.id ?? null)">
+                
+                <span class="text-truncate">{{ cat.name }}</span>
+                
+                <button class="btn btn-sm p-0 text-danger border-0" 
+                        style="font-size: 1.2rem; line-height: 1; background: transparent;"
+                        title="Delete category"
+                        (click)="openDeleteModal(cat.id, $event)">
+                  &times;
+                </button>
+              </li>
+            }
+          </ul>
+
+          <div class="input-group mt-3">
+            <input type="text" class="form-control form-control-sm" placeholder="New category..." [(ngModel)]="newCategoryName" (keyup.enter)="createCategory()">
+            <button class="btn btn-sm btn-outline-primary" (click)="createCategory()">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-9">
+      
+      <div class="card shadow-sm border-0 mb-4 bg-light">
+        <div class="card-body">
+          <form (ngSubmit)="createTask()" #taskForm="ngForm" class="row g-2 align-items-center">
+            <div class="col-md-4">
+              <input type="text" class="form-control" placeholder="What needs to be done?" [(ngModel)]="newTask.title" name="title" required>
+            </div>
+            <div class="col-md-3">
+              <input type="date" class="form-control" [(ngModel)]="newTask.dueDate" name="dueDate" required>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" [(ngModel)]="newTask.categoryId" name="categoryId">
+                <option [ngValue]="null">No Category</option>
+                @for (cat of categories; track cat.id) {
+                  <option [ngValue]="cat.id">{{ cat.name }}</option>
+                }
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-primary w-100" [disabled]="taskForm.invalid">Add Task</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card shadow-sm border-0 mb-3">
+        <ul class="list-group list-group-flush">
+          @for (task of tasks; track task.id) {
+            <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+              <div class="d-flex align-items-center">
+                <input class="form-check-input me-3" type="checkbox" [checked]="task.isCompleted" (change)="toggleTask(task)" style="transform: scale(1.3);">
+                <div>
+                  <h6 class="mb-0" [ngStyle]="{'text-decoration': task.isCompleted ? 'line-through' : 'none'}">{{ task.title }}</h6>
+                  <small class="text-muted">Due: {{ task.dueDate | date:'shortDate' }}</small>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteTask(task.id)">Delete</button>
+            </li>
+          } @empty {
+            <li class="list-group-item text-center text-muted py-4">
+              No tasks found. Time to relax!
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center">
+        <button class="btn btn-outline-secondary btn-sm" (click)="prevPage()" [disabled]="pageNumber === 1">&laquo; Previous</button>
+        <span class="text-muted small">Page {{ pageNumber }}</span>
+        <button class="btn btn-outline-secondary btn-sm" (click)="nextPage()" [disabled]="tasks.length < pageSize">Next &raquo;</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+@if (showDeleteModal) {
+  <div class="modal d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.4);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        
+        <div class="modal-header border-bottom-0 pb-0">
+          <h5 class="modal-title fw-bold">Delete Category</h5>
+          <button type="button" class="btn-close" (click)="closeModal()"></button>
+        </div>
+        
+        <div class="modal-body">
+          <p class="mb-0">Are you sure you want to delete this category? All tasks associated with it will be moved to "No Category".</p>
+        </div>
+        
+        <div class="modal-footer border-top-0 pt-1">
+          <button type="button" class="btn btn-light" (click)="closeModal()">Cancel</button>
+          <button type="button" class="btn btn-danger px-4" (click)="confirmDelete()">Delete</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+}

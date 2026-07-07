@@ -10,6 +10,6 @@ public class Tasks
     public bool IsCompleted { get; set; }
     public int UserId { get; set; }
     public Users? User { get; set; }
-    public int CategoryId { get; set; }
+    public int? CategoryId { get; set; }
     public Categories? Category { get; set; }
 }

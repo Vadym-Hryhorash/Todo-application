@@ -11,6 +11,7 @@ namespace TodoApp.Services
         {
             _taskRepository = repository;
         }
+
         public IEnumerable<Tasks> GetTasks(int pageNumber, int pageSize, int? categoryId, string? searchQuery, int userId)
         {
             IQueryable<Tasks> query = _taskRepository.GetAll().Where(t => t.UserId == userId);
@@ -28,6 +29,7 @@ namespace TodoApp.Services
             query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
             return query.ToList();
         }
+
         public Tasks? GetTaskById(int id, int userId)
         {
             return _taskRepository.GetAll().FirstOrDefault(t => t.Id == id && t.UserId == userId);

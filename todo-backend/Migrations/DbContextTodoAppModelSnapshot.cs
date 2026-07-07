@@ -41,32 +41,6 @@ namespace TodoApp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Work",
-                            UserId = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Personal",
-                            UserId = 0
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Shopping",
-                            UserId = 0
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Studying",
-                            UserId = 0
-                        });
                 });
 
             modelBuilder.Entity("TodoApp.Models.Tasks", b =>
@@ -77,7 +51,7 @@ namespace TodoApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -148,8 +122,7 @@ namespace TodoApp.Migrations
                     b.HasOne("TodoApp.Models.Categories", "Category")
                         .WithMany("Tasks")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("TodoApp.Models.Users", "User")
                         .WithMany("Tasks")
